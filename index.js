@@ -2,13 +2,12 @@ const { Client, GatewayIntentBits } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 const express = require('express');
-const config = require('./config'); // Import file config
+const config = require('./config');
 
 // Inisialisasi express
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Mengatur route untuk menampilkan file HTML
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
@@ -34,7 +33,7 @@ const loadPlugins = (client) => {
 
 // Event ketika bot siap
 client.once('ready', () => {
-    console.log(`${config.botName} is online!`); // Menggunakan nama bot dari config
+    console.log(`${config.botName} is online!`);
     loadPlugins(client); // Memuat plugin saat bot online
 });
 
