@@ -23,7 +23,7 @@ module.exports = (client, prefixes) => {
 
                 try {
                     // Mengirim permintaan ke widipe.com
-                    const response = await axios.get(`https://widipe.com/api/ai?query=${encodeURIComponent(query)}`);
+                    const response = await axios.get(`https://widipe.com/openai?text=${encodeURIComponent(query)}`);
 
                     // Mengambil respons dari AI
                     const aiResponse = response.data.response;
