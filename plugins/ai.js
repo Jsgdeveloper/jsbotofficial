@@ -25,19 +25,20 @@ module.exports = (client, prefixes) => {
                     // Mengirim permintaan ke widipe.com
                     const response = await axios.get(`https://widipe.com/openai?text=${encodeURIComponent(query)}`);
 
-                    // Mengambil respons dari AI
-                    const aiResponse = response.data.response;
-
-                    if (aiResponse) {
+                    // Cek apakah responsnya sukses (status 200)
+                    if (response.status === 200 && response.data && response.data.response) {
+                        const aiResponse = response.data.response;
                         await message.channel.send(`🤖 **AI Response:**\n${aiResponse}`);
                     } else {
-                        await message.channel.send("AI tidak bisa menjawab pertanyaanmu saat ini.");
+                        console.error('Error dalam respons API Widipe:', response);
+                        await message.channel.send("Terjadi kesalahan saat AI mencoba menjawab pertanyaanmu.");
                     }
                 } catch (error) {
                     console.error("Error saat menghubungi AI:", error);
-                    await message.channel.send("Terjadi kesalahan saat mencoba menghubungi AI.");
+                    await message.channel.send("Terjadi kesalahan saat mencoba menghubungi AI. Pastikan layanan tersedia.");
                 }
             }
         }
     });
 };
+                    
