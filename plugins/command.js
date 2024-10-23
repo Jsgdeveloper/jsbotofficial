@@ -1,37 +1,40 @@
-const { exec } = require('child_process');
+const { exec } = require('child_process'); // Menggunakan child_process untuk menjalankan perintah shell
 const { adminId } = require('../config'); // Ambil ID admin dari config.js
 
-module.exports = {
-    name: 'install',
-    description: 'Install NPM packages (Admin only)',
-    
-    async execute(message, args) {
-        // Cek apakah pengirim adalah admin
-        if (message.author.id !== adminId) {
-            return message.reply('You do not have permission to use this command.');
-        }
+module.exports = (client, prefixes) => {
+    client.on('messageCreate', async (message) => {
+        // Mengabaikan pesan dari bot dan bukan admin
+        if (message.author.bot || message.author.id !== adminId) return;
 
-        // Gabungkan argumen untuk perintah npm (misalnya: "install express")
-        const npmCommand = `npm ${args.join(' ')}`;
+        // Mencari prefix
+        const prefix = prefixes.find(p => message.content.startsWith(p));
         
-        // Kirim pesan konfirmasi bahwa proses install dimulai
-        message.channel.send(`Running command: \`${npmCommand}\``);
+        if (prefix) {
+            const commandBody = message.content.slice(prefix.length);
+            const args = commandBody.trim().split(/ +/);
+            const command = args.shift().toLowerCase();
 
-        // Eksekusi perintah NPM
-        exec(npmCommand, (error, stdout, stderr) => {
-            // Kirim log jika terjadi error
-            if (error) {
-                console.error(`Error: ${error.message}`);
-                return message.channel.send(`Error: ${error.message}`);
-            }
-            // Kirim log jika ada stderr
-            if (stderr) {
-                console.error(`Stderr: ${stderr}`);
-                return message.channel.send(`Stderr: ${stderr}`);
-            }
+            // Perintah untuk menginstal npm
+            if (command === 'install') {
+                const packageName = args[0];
+                
+                if (!packageName) {
+                    return message.channel.send("Silakan sebutkan nama paket yang ingin diinstal.");
+                }
 
-            // Kirim hasil stdout ke Discord
-            message.channel.send(`Command executed successfully:\n\`\`\`${stdout}\`\`\``);
-        });
-    },
+                exec(`npm install ${packageName}`, (error, stdout, stderr) => {
+                    if (error) {
+                        console.error(`Error: ${error.message}`);
+                        return message.channel.send(`Terjadi kesalahan saat menginstal paket: \`${packageName}\`. Kesalahan: ${error.message}`);
+                    }
+                    if (stderr) {
+                        console.error(`stderr: ${stderr}`);
+                        return message.channel.send(`Kesalahan saat menginstal paket: \`${packageName}\`.`);
+                    }
+                    message.channel.send(`Paket \`${packageName}\` berhasil diinstal!\n\`\`\`${stdout}\`\`\``);
+                });
+            }
+        }
+    });
 };
+                                                    
