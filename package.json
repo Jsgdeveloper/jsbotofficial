@@ -1,6 +1,7 @@
 {
   "name": "JsBot",
   "version": "1.0.0",
+  "description": "Discord bot with plugin system and Firebase integration",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -10,8 +11,9 @@
     "express": "^4.21.1",
     "dotenv": "^16.4.5",
     "firebase": "^9.0.0"
-    },
+  },
   "engines": {
     "node": ">=16.0.0"
-  }
+  },
+  "type": "commonjs"
 }
